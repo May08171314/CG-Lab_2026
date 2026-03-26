@@ -1,4 +1,4 @@
-## 线框丝滑版本
+## D:\CG-Lab_2026\src\Work2\cube_line.py
 
 import taichi as ti
 import math
@@ -14,6 +14,7 @@ edges = [
     (0, 4), (1, 5), (2, 6), (3, 7)
 ]
 
+
 @ti.func
 def get_model_matrix(angle_x: ti.f32, angle_y: ti.f32):
     rx = angle_x * math.pi / 180.0
@@ -22,11 +23,12 @@ def get_model_matrix(angle_x: ti.f32, angle_y: ti.f32):
     cy, sy = ti.cos(ry), ti.sin(ry)
 
     return ti.Matrix([
-        [cy,  0,   sy,    0],
-        [sx*sy, cx, -sx*cy, 0],
-        [-cx*sy, sx, cx*cy, 0],
-        [0,    0,    0,    1]
+        [cy,      0,     sy,    0],
+        [sx*sy,  cx, -sx*cy,    0],
+        [-cx*sy, sx,  cx*cy,    0],
+        [0,       0,      0,    1]
     ])
+
 
 @ti.func
 def get_view_matrix(eye_pos):
@@ -36,6 +38,7 @@ def get_view_matrix(eye_pos):
         [0.0, 0.0, 1.0, -eye_pos[2]],
         [0.0, 0.0, 0.0, 1.0]
     ])
+
 
 @ti.func
 def get_projection_matrix(eye_fov: ti.f32, aspect_ratio: ti.f32, zNear: ti.f32, zFar: ti.f32):
@@ -71,6 +74,7 @@ def get_projection_matrix(eye_fov: ti.f32, aspect_ratio: ti.f32, zNear: ti.f32, 
     M_ortho = M_ortho_scale @ M_ortho_trans
     return M_ortho @ M_p2o
 
+
 @ti.kernel
 def compute_transform(angle_x: ti.f32, angle_y: ti.f32):
     eye_pos = ti.Vector([0.0, 0.0, 12.0])
@@ -87,6 +91,7 @@ def compute_transform(angle_x: ti.f32, angle_y: ti.f32):
         screen_coords[i][0] = (v_ndc[0] + 1.0) / 2.0
         screen_coords[i][1] = (v_ndc[1] + 1.0) / 2.0
 
+
 def main():
     vertices[0] = [-1, -1, -1]
     vertices[1] = [1, -1, -1]
@@ -97,15 +102,14 @@ def main():
     vertices[6] = [1, 1, 1]
     vertices[7] = [-1, 1, 1]
 
-    gui = ti.GUI("3D Cube ✨ 完美自由旋转 ✨", res=(800, 800))
+    gui = ti.GUI("3D Cube Lines", res=(800, 800))
 
     angle_x = 0.0
     angle_y = 0.0
 
     while gui.running:
-        # ====================== 这里改成了平滑版本！======================
-        gui.get_event()  # 每帧都获取事件
-        if gui.is_pressed('a'): angle_y += 2.5  # 按住就连续转
+        gui.get_event() 
+        if gui.is_pressed('a'): angle_y += 2.5  
         if gui.is_pressed('d'): angle_y -= 2.5
         if gui.is_pressed('w'): angle_x += 2.5
         if gui.is_pressed('s'): angle_x -= 2.5
@@ -116,9 +120,10 @@ def main():
         for (i, j) in edges:
             a = screen_coords[i]
             b = screen_coords[j]
-            gui.line(a, b, radius=2, color=0x00FFFF)
+            gui.line(a, b, radius=2, color=0x90FCBE)
 
         gui.show()
+
 
 if __name__ == '__main__':
     main()

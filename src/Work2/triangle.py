@@ -1,10 +1,10 @@
+## D:\CG-Lab_2026\src\Work2\triangle.py
+
 import taichi as ti
 import math
 
-# 初始化 Taichi，指定使用 CPU 后端
 ti.init(arch=ti.cpu)
 
-# 声明 Taichi 的 Field 来存储顶点和转换后的屏幕坐标
 vertices = ti.Vector.field(3, dtype=ti.f32, shape=3)
 screen_coords = ti.Vector.field(2, dtype=ti.f32, shape=3)
 
@@ -79,7 +79,6 @@ def get_projection_matrix(eye_fov: ti.f32, aspect_ratio: ti.f32, zNear: ti.f32, 
 
     M_ortho = M_ortho_scale @ M_ortho_trans
 
-    # 返回组合矩阵
     return M_ortho @ M_p2o
 
 
@@ -117,30 +116,27 @@ def main():
     vertices[2] = [-2.0, 0.0, -2.0]
 
     # 创建 GUI 窗口
-    gui = ti.GUI("3D Transformation (Taichi) ✨ 丝滑版", res=(700, 700))
+    gui = ti.GUI("3D Triangle ", res=(700, 700))
     angle = 0.0
 
     while gui.running:
-        # ====================== 这里改成丝滑控制！======================
         gui.get_event()
         if gui.is_pressed('a'):
-            angle += 1.2       # 按住一直转
+            angle += 1.2       
         if gui.is_pressed('d'):
-            angle -= 1.2       # 按住一直转
+            angle -= 1.2      
         if gui.is_pressed(ti.GUI.ESCAPE):
             gui.running = False
 
-        # 计算变换
         compute_transform(angle)
 
-        # 获取 2D 坐标并绘制
         a = screen_coords[0]
         b = screen_coords[1]
         c = screen_coords[2]
 
-        gui.line(a, b, radius=2, color=0xFF0000)
-        gui.line(b, c, radius=2, color=0x00FF00)
-        gui.line(c, a, radius=2, color=0x0000FF)
+        gui.line(a, b, radius=2, color=0xBFFFC3)
+        gui.line(b, c, radius=2, color=0x1CD5F4)
+        gui.line(c, a, radius=2, color=0xFAAC57)
 
         gui.show()
 
