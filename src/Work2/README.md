@@ -57,8 +57,21 @@ uv run -m src.Work2.cube_face
 - W/A/S/D 流畅控制：使用`gui.is_pressed()`实现帧级连续触发，完成丝滑旋转效果。
 - 透视投影:定义 12 条边数据结构，利用透视投影算法绘制立体线框，可清晰观察立方体的空间拓扑结构。
 ## 4. 效果展示
-下面是项目的执行效果展示：
-通过调整可变参数，可实现不同的效果。例如：
+下面是项目的执行效果展示：<br>
+![旋转三角形](gifs/triangle.gif)
+
+通过调整可变参数，可实现不同的效果。例如：<br>
+从左上到右下依次为改变旋转速度、三角形顶点位置、观察距离、线条颜色。<br>
+![改变旋转速度](gifs/triangle_angle.gif)
+![改变三角形顶点位置](gifs/triangle_shape.gif)
+![改变观察距离](gifs/triangle_distance.gif)
+![改变线条颜色](gifs/triangle_color.gif)
+
+3D 立方体旋转效果如下：<br>
+![](gifs/cube_line.gif)
+![](gifs/cube_face.gif)
+
+
 
 ## 5. 可调参数说明
 所有程序均可自由调整参数：
