@@ -17,16 +17,18 @@
 
 ## 二、项目架构（src 布局规范）
 ### 2.1 目录结构
-    CG-Lab/
-    ├── src/           # 核心代码目录（Source Layout）
-    │ └── Work0/       # 万有引力仿真模块
-    │ ├── init.py      # 模块标识文件
-    │ ├── config.py    # 参数配置（物理 / 渲染参数）
-    │ ├── physics.py   # 物理计算核心（GPU 并行）
-    │ └── main.py      # 主程序（初始化 + 渲染循环）
-    ├── .gitignore     # Git 忽略规则（屏蔽虚拟环境 / 缓存文件）
-    └── README.md      # 项目说明文档
-
+```
+CG_Lab_2026/
+├── pyproject.toml
+├── src/
+│   └── Work1/
+│       ├── images       # 图片
+│       ├── init.py      # 模块标识文件
+│       ├── config.py    # 参数配置（物理 / 渲染参数）
+│       ├── physics.py   # 物理计算核心（GPU 并行）
+│       ├── main.py      # 主程序（初始化 + 渲染循环）
+│       └── README.md      
+```
 ### 2.2 模块职责
 | 文件名 | 核心职责 |
 |--------|----------|
