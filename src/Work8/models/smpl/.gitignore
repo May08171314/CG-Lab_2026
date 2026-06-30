@@ -1,0 +1,3 @@
+# 忽略SMPL大模型文件
+*.pkl
+src/Work8/models/smpl/*.pkl

@@ -8,3 +8,5 @@ wheels/
 
 # Virtual environments
 .venv
+src/Work8/models/smpl/*.pkl
+*.pkl
