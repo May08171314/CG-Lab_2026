@@ -126,15 +126,15 @@ $$L_{total} = L_{silhouette} + w_{lap}L_{lap} + w_{edge}L_{edge} + w_{normal}L_{
 3. 多视角联合监督能够约束三维空间网格，仅靠单视角剪影会出现深度歧义，无法还原完整三维外形。
 
 # 7. 备注
-# ===================== 可配置超参数区 =====================
-num_views = 20
-image_size = 256
-blur_sigma = 1e-4
-sphere_subdiv = 4
-epochs = 300
-lr = 1e-3
-# 正则权重
-w_lap = 1.0
-w_edge = 0.1
-w_normal = 0.01
-# =========================================================
+## 可配置超参数区 
+- num_views = 20
+- image_size = 256
+- blur_sigma = 1e-4
+- sphere_subdiv = 4
+- epochs = 300
+- lr = 1e-3
+## 正则权重
+- w_lap = 1.0
+- w_edge = 0.1
+- w_normal = 0.01
+
