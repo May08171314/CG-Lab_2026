@@ -100,7 +100,10 @@ pip install torch torchvision smplx numpy matplotlib
 手肘附近皮肤顶点同时分配**右肩、右肘**两个关节的蒙皮权重，骨骼旋转时顶点通过多关节变换加权混合，弯曲区域皮肤平滑拉伸过渡，不会出现单关节控制导致的生硬棱角、皮肤穿模，直观验证LBS线性混合蒙皮实现平滑形变的核心原理。
 
 ## （3） 实验现象展示
-!(outputs/anim_elbow_rotate.gif) 
+<div align="center">
+    <img src="outputs/anim_elbow_rotate.gif" width="300"/>
+    <p>拓展结果：右肘关节平滑旋转动画</p>
+</div>
 
 # 5. 可调参数与效果展示指南
 运行代码支持通过命令行修改参数，不同参数会产生差异化可视化效果，下面给出可修改参数、运行命令、预期效果与截图。
