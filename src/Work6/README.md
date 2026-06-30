@@ -7,14 +7,14 @@
 ## 目录结构
 ```
 MeshDeform_SoftRasterization/
-├── images                   # 存放图片
-├── cow.obj                  # 目标奶牛三维网格模型（真值Mesh）
-├── mesh_optimize.ipynb         # 主实验完整代码
-├── output_meshes/           # 自动生成：每轮迭代中间网格obj文件
+├── images                       # 存放图片
+├── cow.obj                      # 目标奶牛三维网格模型（真值Mesh）
+├── mesh_optimize.ipynb          # 主实验完整代码
+├── output_meshes/               # 自动生成：每轮迭代中间网格obj文件
 │   ├── mesh_epoch_000.obj
 │   ├── mesh_epoch_020.obj
 │   └── ...
-└── README.md                # 项目说明文档（本文档）
+└── README.md                    # 项目说明文档（本文档）
 ```
 ## 模块分层架构
 1. **数据加载模块**：加载目标奶牛Mesh、归一化预处理、生成多视角摄像机；
@@ -120,6 +120,7 @@ $$L_{total} = L_{silhouette} + w_{lap}L_{lap} + w_{edge}L_{edge} + w_{normal}L_{
 2. 仅依靠剪影重建损失会使网格陷入局部最优、面片交叉塌陷，拉普拉斯、边长、法线三重正则是保证网格拓扑合理性的关键；
 3. 多视角联合监督能够约束三维空间网格，仅靠单视角剪影会出现深度歧义，无法还原完整三维外形。
 
+# 7. 备注
 # ===================== 可配置超参数区 =====================
 num_views = 20
 image_size = 256
