@@ -115,6 +115,8 @@ python run_lbs_lab.py --joint-id 4
 > 截图点：两张热力图左右对比，说明不同骨骼控制人体不同区域皮肤。
 
 从左到右依次为joint = 4、joint = 18
+![joint = 4](outputs/stage_a_template_weights_4.png)
+![joint = 18](outputs/stage_a_template_weights_18.png)
 
 ## （3） 测试方案2：修改体型参数维度（胖瘦形变对比）
 ### 运行命令1（默认10个β，中等体型变化）
@@ -131,6 +133,8 @@ python run_lbs_lab.py --num-betas 20
 > 截图点：两张stage_b_shaped_joints.png对比，观察人体胖瘦、关节位置同步变化。
 
 从左到右依次为 10、20
+![num_betas = 10](outputs/stage_b_shaped_joints_10.png)
+![num_betas = 20](outputs/stage_b_shaped_joints_20.png)
 
 ## （4） 测试方案3：修改姿态参数（弯曲幅度对比）
 修改`build_demo_pose()`内关节旋转轴角数值，例如：
@@ -142,6 +146,13 @@ python run_lbs_lab.py --num-betas 20
 > 截图点：对比两张姿态校正图、两张最终LBS效果图，说明pose offsets用于修正骨骼弯曲皮肤形变。
 
 从左到右依次为 -0.1、-0.35、-0.8
+![left_elbow = -0.1](outputs/stage_c_pose_offsets_-0.1.png)
+![left_elbow = -0.35](outputs/stage_c_pose_offsets_-0.35.png)
+![left_elbow = -0.8](outputs/stage_c_pose_offsets_-0.8.png)
+
+![left_elbow = -0.1](outputs/stage_d_lbs_result_-0.1.png)
+![left_elbow = -0.35](outputs/stage_d_lbs_result.png)
+![left_elbow = -0.8](outputs/stage_d_lbs_result_-0.8.png)
 
 ## （5） 误差指标效果说明
 修改任意参数后，summary.txt内`manual_vs_official_mean_abs_error`始终维持极小值（1e-6量级），证明手写LBS数学流程和官方实现完全等价；
