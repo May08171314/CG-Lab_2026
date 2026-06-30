@@ -7,14 +7,14 @@
 ## 目录结构
 ```
 MeshDeform_SoftRasterization/
-├── images                   # 存放图片
-├── cow.obj                  # 目标奶牛三维网格模型（真值Mesh）
-├── mesh_optimize.py         # 主实验完整代码
-├── output_meshes/           # 自动生成：每轮迭代中间网格obj文件
+├── images                       # 存放图片
+├── cow.obj                      # 目标奶牛三维网格模型（真值Mesh）
+├── mesh_optimize.ipynb          # 主实验完整代码
+├── output_meshes/               # 自动生成：每轮迭代中间网格obj文件
 │   ├── mesh_epoch_000.obj
 │   ├── mesh_epoch_020.obj
 │   └── ...
-└── README.md                # 项目说明文档（本文档）
+└── README.md                    # 项目说明文档（本文档）
 ```
 ## 模块分层架构
 1. **数据加载模块**：加载目标奶牛Mesh、归一化预处理、生成多视角摄像机；
@@ -25,19 +25,19 @@ MeshDeform_SoftRasterization/
 6. **可视化输出模块**：迭代剪影对比绘图、中间三维模型本地保存。
 
 # 2. 代码逻辑与关键模块说明
-## 2.1 环境与依赖初始化
+## （1） 环境与依赖初始化
 自动检测CUDA加速设备，导入PyTorch3D网格、渲染、损失全套工具包，打印运行环境版本便于调试。
 ```python
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 ```
 
-## 2.2 目标真值Mesh加载与多视角真值剪影生成
+## （2） 目标真值Mesh加载与多视角真值剪影生成
 1. `load_obj`读取奶牛obj网格，对顶点中心化+尺度归一化，统一模型尺寸；
 2. `look_at_view_transform`生成20个环绕水平旋转摄像机，覆盖物体全部侧面视角；
 3. **软光栅核心**：`SoftSilhouetteShader`实现软边界Sigmoid平滑过渡，解决传统硬光栅梯度消失问题；
 4. 批量渲染全部视角真值剪影`target_silhouette`，作为监督标签。
 
-## 2.3 初始球体网格与可形变参数定义
+## （3） 初始球体网格与可形变参数定义
 - `ico_sphere(4)`生成4级细分球体，作为优化初始源网格；
 - `deform_verts`：与球体顶点同尺寸零张量，设置`requires_grad=True`，作为唯一可训练参数，通过偏移原始球体顶点实现网格形变；
 ```python
@@ -45,14 +45,14 @@ src_mesh = ico_sphere(4, device)
 deform_verts = torch.zeros_like(src_mesh.verts_packed(), requires_grad=True)
 ```
 
-## 2.4 总损失函数
+## （4） 总损失函数
 $$L_{total} = L_{silhouette} + w_{lap}L_{lap} + w_{edge}L_{edge} + w_{normal}L_{normal}$$
 1. **剪影重建损失 $L_{silhouette}$**：多视角预测剪影与真值剪影MSE误差，驱动网格贴合目标外形；
 2. **拉普拉斯平滑 $L_{lap}$**：约束相邻顶点坐标平滑，抑制表面尖锐凸起；
 3. **边长一致性惩罚 $L_{edge}$**：约束三角形边长均匀，避免网格拉伸、面片坍塌；
 4. **法线一致性 $L_{normal}$**：约束相邻三角面片法线方向接近，保证曲面光滑连续；
 
-## 2.5 梯度下降优化循环
+## （5） 梯度下降优化循环
 1. 每轮清空梯度，使用偏移量更新原始球体网格`offset_verts`；
 2. 前向传播渲染当前网格多视角剪影，计算总损失；
 3. `loss.backward()`反向传播得到顶点偏移梯度，优化器更新形变参数；
@@ -68,7 +68,7 @@ $$L_{total} = L_{silhouette} + w_{lap}L_{lap} + w_{edge}L_{edge} + w_{normal}L_{
 7. **跨设备兼容**：自动适配NVIDIA CUDA加速，无GPU时自动切换CPU运行。
 
 # 4. 可调超参数与不同参数效果展示
-## 4.1 全部可修改关键参数
+## （1） 全部可修改关键参数
 | 参数分类 | 参数名称 | 代码位置 | 默认值 | 参数作用 |
 | ---- | ---- | ---- | ---- | ---- |
 | 渲染视角 | num_views | 摄像机配置段 | 20 | 多视角监督数量，越大拟合精度越高、速度越慢 |
@@ -81,7 +81,7 @@ $$L_{total} = L_{silhouette} + w_{lap}L_{lap} + w_{edge}L_{edge} + w_{normal}L_{
 | 正则权重-w_edge | edge损失系数 | loss计算公式 | 0.1 | 边长约束强度，越大网格面片越均匀 |
 | 正则权重-w_normal | normal损失系数 | loss计算公式 | 0.01 | 法线平滑强度，越大曲面越圆润 |
 
-## 4.2 多组参数对照实验方案
+## （2） 多组参数对照实验方案
 ### 实验组1：正则化权重对比（有无正则差异）
 1. 对照组：关闭全部正则（权重全部置0）
     ```python
@@ -103,11 +103,16 @@ $$L_{total} = L_{silhouette} + w_{lap}L_{lap} + w_{edge}L_{edge} + w_{normal}L_{
 2. 默认 `ico_sphere(4)`：顶点充足，完整还原奶牛外形；
 3. 高细分 `ico_sphere(5)`：顶点过多，显存占用翻倍，训练速度大幅下降。
 
-## 4.3 标准收敛效果参考
+## （3） 标准收敛效果参考
 迭代299轮标准输出：
 - 迭代步数: 299/300 | 总 Loss: 0.0179 | 剪影误差: 0.0141
 - 左图：Ground Truth Silhouette（奶牛真值剪影）
 - 右图：Optimizing... (Epoch 299)（优化后球体剪影）
+
+<div align="center">
+    <img src="images/展示.png" width="600"/>
+    <p>标准收敛效果</p>
+</div>
 
 # 5. 运行说明
 1. 将`cow.obj`与`mesh_optimize.py`放在同一文件夹；
@@ -120,15 +125,16 @@ $$L_{total} = L_{silhouette} + w_{lap}L_{lap} + w_{edge}L_{edge} + w_{normal}L_{
 2. 仅依靠剪影重建损失会使网格陷入局部最优、面片交叉塌陷，拉普拉斯、边长、法线三重正则是保证网格拓扑合理性的关键；
 3. 多视角联合监督能够约束三维空间网格，仅靠单视角剪影会出现深度歧义，无法还原完整三维外形。
 
-# ===================== 可配置超参数区 =====================
-num_views = 20
-image_size = 256
-blur_sigma = 1e-4
-sphere_subdiv = 4
-epochs = 300
-lr = 1e-3
-# 正则权重
-w_lap = 1.0
-w_edge = 0.1
-w_normal = 0.01
-# =========================================================
+# 7. 备注
+## 可配置超参数区 
+- num_views = 20
+- image_size = 256
+- blur_sigma = 1e-4
+- sphere_subdiv = 4
+- epochs = 300
+- lr = 1e-3
+## 正则权重
+- w_lap = 1.0
+- w_edge = 0.1
+- w_normal = 0.01
+
