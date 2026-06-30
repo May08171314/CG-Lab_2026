@@ -9,7 +9,8 @@
 ## (1)目录树
 ```
 Work8/
-├─ run_lbs_lab.py        # 主程序入口，完整实验全部逻辑
+├─ run_lbs_lab.py        # 主程序入口，基础部分
+├─ extra.py        # 主程序入口，拓展部份
 ├─ models/
 │  └─ smpl/
 │     └─ SMPL_NEUTRAL.pkl # SMPL中性人体模型文件
@@ -88,9 +89,20 @@ pip install torch torchvision smplx numpy matplotlib
     2×2子图一次性展示模板网格→体型形变→姿态校正→最终蒙皮全部中间状态；
 7. **任务7 手写LBS与官方结果误差验证**
     计算MAE平均误差、Max最大误差，验证手写数学流程与官方实现完全对齐。
+   
+# 4. 选做拓展：单关节姿态旋转动画
+## （1） 任务实现要求
+1. 全程固定shape体型参数，仅修改关节姿态；
+2. 选取右肘关节，绕Y轴从0弧度平滑旋转至0.75弧度，共30帧线性插值；
+3. 自动渲染每一帧人体网格，合成动态GIF动画文件 `outputs/anim_elbow_rotate.gif`；
 
+## （2） 实验现象分析
+手肘附近皮肤顶点同时分配**右肩、右肘**两个关节的蒙皮权重，骨骼旋转时顶点通过多关节变换加权混合，弯曲区域皮肤平滑拉伸过渡，不会出现单关节控制导致的生硬棱角、皮肤穿模，直观验证LBS线性混合蒙皮实现平滑形变的核心原理。
 
-# 4. 可调参数与效果展示指南
+## （3） 实验现象展示
+!(outputs/anim_elbow_rotate.gif) 
+
+# 5. 可调参数与效果展示指南
 运行代码支持通过命令行修改参数，不同参数会产生差异化可视化效果，下面给出可修改参数、运行命令、预期效果与截图。
 
 ## （1） 核心可调命令行参数
@@ -115,9 +127,9 @@ python run_lbs_lab.py --joint-id 4
 > 截图点：两张热力图左右对比，说明不同骨骼控制人体不同区域皮肤。
 
 从左到右依次为joint = 4、joint = 18
-![joint = 4](outputs/stage_a_template_weights_4.png)
-![joint = 18](outputs/stage_a_template_weights_18.png)
-
+| joint=4 | joint=18 |
+|--------|---------|
+| ![joint = 4](outputs/stage_a_template_weights_4.png) | ![joint = 18](outputs/stage_a_template_weights_18.png) |
 ## （3） 测试方案2：修改体型参数维度（胖瘦形变对比）
 ### 运行命令1（默认10个β，中等体型变化）
 ```bash
@@ -133,9 +145,9 @@ python run_lbs_lab.py --num-betas 20
 > 截图点：两张stage_b_shaped_joints.png对比，观察人体胖瘦、关节位置同步变化。
 
 从左到右依次为 10、20
-![num_betas = 10](outputs/stage_b_shaped_joints_10.png)
-![num_betas = 20](outputs/stage_b_shaped_joints_20.png)
-
+| beta=10 | beta=20 |
+|--------|---------|
+| ![num_betas = 10](outputs/stage_b_shaped_joints_10.png) | ![num_betas = 20](outputs/stage_b_shaped_joints_20.png) |
 ## （4） 测试方案3：修改姿态参数（弯曲幅度对比）
 修改`build_demo_pose()`内关节旋转轴角数值，例如：
 1. 减小手肘旋转：`set_joint_pose("left_elbow", [0.0, -0.1, 0.0])` → 手臂微弯
@@ -146,20 +158,17 @@ python run_lbs_lab.py --num-betas 20
 > 截图点：对比两张姿态校正图、两张最终LBS效果图，说明pose offsets用于修正骨骼弯曲皮肤形变。
 
 从左到右依次为 -0.1、-0.35、-0.8
-![left_elbow = -0.1](outputs/stage_c_pose_offsets_-0.1.png)
-![left_elbow = -0.35](outputs/stage_c_pose_offsets_-0.35.png)
-![left_elbow = -0.8](outputs/stage_c_pose_offsets_-0.8.png)
-
-![left_elbow = -0.1](outputs/stage_d_lbs_result_-0.1.png)
-![left_elbow = -0.35](outputs/stage_d_lbs_result.png)
-![left_elbow = -0.8](outputs/stage_d_lbs_result_-0.8.png)
+| ① | ② | ③ |
+|--------|--------|--------|
+| ![left_elbow = -0.1](outputs/stage_c_pose_offsets_-0.1.png) | ![left_elbow = -0.35](outputs/stage_c_pose_offsets_-0.35.png) | ![left_elbow = -0.8](outputs/stage_c_pose_offsets_-0.8.png) |
+| ![left_elbow = -0.1](outputs/stage_d_lbs_result_-0.1.png) | ![left_elbow = -0.35](outputs/stage_d_lbs_result.png) | ![left_elbow = -0.8](outputs/stage_d_lbs_result_-0.8.png) |
 
 ## （5） 误差指标效果说明
 修改任意参数后，summary.txt内`manual_vs_official_mean_abs_error`始终维持极小值（1e-6量级），证明手写LBS数学流程和官方实现完全等价；
 - 若参数正确加载，平均误差<1e-5；
 
 
-# 5. 输出文件说明
+# 6. 输出文件说明
 运行完成后outputs目录生成全部实验要求文件：
 1. `stage_a_template_weights.png`：任务2单关节权重热力图
 2. `stage_b_shaped_joints.png`：任务3体型校正+回归关节
@@ -169,7 +178,7 @@ python run_lbs_lab.py --num-betas 20
 6. `all_joint_weights.png`：选做全关节主导权重分布图
 7. `summary.txt`：模型基础信息、手写LBS与官方误差指标
 
-# 6. 实验思考题简答
+# 7. 实验思考题简答
 1. 为什么一个顶点不只受一个关节影响？
     人体关节连接处（肩、膝、肘）皮肤会同时跟随两根骨骼运动，单关节权重会出现硬折痕，多关节加权混合实现平滑过渡。
 2. 如果顶点权重几乎全给单一关节：关节弯折处皮肤会生硬撕裂、出现明显棱角，无平滑过渡。
