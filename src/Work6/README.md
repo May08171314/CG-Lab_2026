@@ -109,6 +109,11 @@ $$L_{total} = L_{silhouette} + w_{lap}L_{lap} + w_{edge}L_{edge} + w_{normal}L_{
 - 左图：Ground Truth Silhouette（奶牛真值剪影）
 - 右图：Optimizing... (Epoch 299)（优化后球体剪影）
 
+<div align="center">
+    <img src="images/展示.png" width="600"/>
+    <p>标准收敛效果</p>
+</div>
+
 # 5. 运行说明
 1. 将`cow.obj`与`mesh_optimize.py`放在同一文件夹；
 2. 终端执行：`python mesh_optimize.py`；
