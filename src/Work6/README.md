@@ -9,7 +9,7 @@
 MeshDeform_SoftRasterization/
 ├── images                   # 存放图片
 ├── cow.obj                  # 目标奶牛三维网格模型（真值Mesh）
-├── mesh_optimize.py         # 主实验完整代码
+├── mesh_optimize.ipynb         # 主实验完整代码
 ├── output_meshes/           # 自动生成：每轮迭代中间网格obj文件
 │   ├── mesh_epoch_000.obj
 │   ├── mesh_epoch_020.obj
